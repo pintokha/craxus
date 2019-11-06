@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Pintokha\\Craxus\\src\\": ""
+            "Pintokha\\Craxus\\": "src/"
         }
     }
 }
