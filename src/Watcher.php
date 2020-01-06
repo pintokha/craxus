@@ -74,7 +74,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     {
         $client = new Client();
 
-        $res = $client->post('http://localhost:8098/api/1/send_result', [
+        $res = $client->post('http://localhost:8098/api/'. env('CRAXUS_PROJECT_ID', null) .'/send_result', [
             'form_params' => [
                 'api_token' => env('CRAXUS_API_TOKEN', null),
                 'result' => json_encode($this->results)
