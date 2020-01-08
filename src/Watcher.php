@@ -74,9 +74,9 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     {
         $client = new Client();
 
-        $res = $client->post('https://craxus.io/api/'. env('CRAXUS_PROJECT_ID', null) .'/send_result', [
+        $res = $client->post('https://craxus.io/api/'. getenv('CRAXUS_PROJECT_ID', null) .'/send_result', [
             'form_params' => [
-                'api_token' => env('CRAXUS_API_TOKEN', null),
+                'api_token' => getenv('CRAXUS_API_TOKEN', null),
                 'result' => json_encode($this->results)
             ]
         ]);
@@ -119,7 +119,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
 
         foreach ($annotations[1] as $annotation)
             if (strpos($annotation, 'craxus') !== false) {
-                list($a, $this->testID) = explode(' ', $annotation);
+                list(, $this->testID) = explode(' ', $annotation);
             }
     }
 
