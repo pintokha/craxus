@@ -18,5 +18,13 @@
         "psr-4": {
             "Pintokha\\Craxus\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pintokha\\Craxus\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }
