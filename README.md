@@ -7,7 +7,7 @@ description ...
 
 ## Installation
 ```
-composer require pintokha/craxus
+composer require pintokha/craxus --dev
 ```
 ## Setup
 ...
