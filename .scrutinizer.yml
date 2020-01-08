@@ -10,7 +10,7 @@ tools:
   php_code_sniffer:
     config:
       standard: "PSR2"
-    sensiolabs_security_checker: true
+#    sensiolabs_security_checker: true
     php_code_coverage: false
     php_depend: true
     php_loc:
