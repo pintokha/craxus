@@ -17,6 +17,9 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
     AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
 {
+    protected $projectID;
+    protected $api_token;
+
     protected $results = [];
     protected $exceptions = ['Warning'];
 
@@ -72,16 +75,9 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
 
     public function executeAfterLastTest(): void
     {
-        $client = new Client();
+        $this->checkConfig();
 
-        $res = $client->post('https://craxus.io/api/'. getenv('CRAXUS_PROJECT_ID', null) .'/send_result', [
-            'form_params' => [
-                'api_token' => getenv('CRAXUS_API_TOKEN', null),
-                'result' => json_encode($this->results)
-            ]
-        ]);
-
-        printf("\n %s", $res->getBody());
+        $this->sendRequest();
     }
 
     protected function setResult(string $result, string  $test, string $message, float $time)
@@ -126,5 +122,45 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     public function parseTest($test)
     {
         list($this->class, $this->method) = explode('::', $test);
+    }
+
+    public function checkConfig()
+    {
+        if (!getenv('CRAXUS_API_TOKEN')) {
+            echo PHP_EOL;
+            echo "=================================================================";
+            echo PHP_EOL;
+            echo "CRAXUS: You have not set a value in .env file: 'CRAXUS_API_TOKEN'";
+            echo PHP_EOL;
+            echo "=================================================================";
+            echo PHP_EOL;
+            exit();
+        } elseif(!getenv('CRAXUS_PROJECT_ID')) {
+            echo PHP_EOL;
+            echo "==================================================================";
+            echo PHP_EOL;
+            echo "CRAXUS: You have not set a value in .env file: 'CRAXUS_PROJECT_ID'";
+            echo PHP_EOL;
+            echo "==================================================================";
+            echo PHP_EOL;
+            exit();
+        } else {
+            $this->api_token = getenv('CRAXUS_API_TOKEN');
+            $this->projectID = getenv('CRAXUS_PROJECT_ID');
+        }
+    }
+
+    public function sendRequest()
+    {
+        $client = new Client();
+
+        $res = $client->post('https://craxus.io/api/'. $this->projectID .'/send_result', [
+            'form_params' => [
+                'api_token' => $this->api_token,
+                'result' => json_encode($this->results)
+            ]
+        ]);
+
+        printf("\n %s", $res->getBody());
     }
 }
