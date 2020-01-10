@@ -1,7 +1,7 @@
 {
     "name": "pintokha/craxus",
     "description": "A package to send your test result on your Craxus account",
-    "keywords": ["testing", "manager", "phpunit"],
+    "keywords": ["testing", "manager", "phpunit", "laravel"],
     "license": "MIT",
     "version": "1.0.0",
     "authors": [

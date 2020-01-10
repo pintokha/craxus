@@ -39,7 +39,9 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     {
         if(!in_array($test, $this->exceptions)) {
             try { $this->setTestData($test); }
-            catch (\Exception $exception) {}
+            catch (\Exception $exception) {
+                // skip
+            }
         }
     }
 
