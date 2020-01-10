@@ -39,7 +39,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     {
         if(!in_array($test, $this->exceptions)) {
             try { $this->setTestData($test); }
-            catch (\Exception $exception) { var_dump($exception->getMessage()); }
+            catch (\Exception $exception) {}
         }
     }
 
@@ -77,7 +77,8 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     {
         $this->checkConfig();
 
-        $this->sendRequest();
+        if (count($this->results) > 0)
+            $this->sendRequest();
     }
 
     protected function setResult(string $result, string  $test, string $message, float $time)
@@ -105,7 +106,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
             $rc = new ReflectionClass($this->class);
             $this->docComment = $rc->getMethod($this->method)->getDocComment();
         } catch (\Exception $exception) {
-            var_dump($exception->getMessage());
+            $this->docComment = '';
         }
     }
 
