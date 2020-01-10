@@ -3,7 +3,7 @@
     "description": "A package to send your test result on your Craxus account",
     "keywords": ["testing", "manager"],
     "license": "MIT",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Sviatoslav Pintokha",
@@ -11,12 +11,12 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.0",
         "ext-json": "*"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^6.3",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": ">=7.2"
     },
     "autoload": {
         "psr-4": {
