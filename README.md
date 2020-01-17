@@ -6,9 +6,8 @@
 Register at <https://craxus.io> and use the application credentials within your app as shown below.
 
 ## Supported platforms
-* PHP - supports PHP versions: 7.2
-* Laravel(& dusk) - version 5.8
-* Symfony
+* PHP - supports PHP versions: 7.4
+* Laravel(& dusk) - version 6.x
 
 ## Installation
 You can install Craxus watcher via composer package
@@ -18,7 +17,7 @@ composer require pintokha/craxus --dev
 Or add to ```composer.json```:
 ```
 "require-dev": {
-        "pintokha/craxus": "2.0.0"
+        "pintokha/craxus": "1.0.0"
 }
 ```
 and then run ```composer update```.
