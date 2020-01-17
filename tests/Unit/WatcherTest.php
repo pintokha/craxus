@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class WatcherTest extends TestCase
 {
-    public function testFail()
+    public function testPassed()
     {
         $this->assertTrue(true);
     }

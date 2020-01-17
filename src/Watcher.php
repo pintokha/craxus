@@ -3,6 +3,7 @@
 namespace Pintokha\Craxus;
 
 use GuzzleHttp\Client;
+use phpDocumentor\Reflection\Types\Void_;
 use PHPUnit\Runner\BeforeTestHook;
 use ReflectionClass;
 use PHPUnit\Runner\AfterIncompleteTestHook;
@@ -17,8 +18,11 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
     AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
 {
-    protected $projectID;
+    // user config
+    protected $enable;
     protected $api_token;
+    protected $project_id;
+    protected $configured = false;
 
     protected $results = [];
     protected $exceptions = ['Warning'];
@@ -28,12 +32,27 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     protected $testID;
     protected $docComment;
 
-    protected const TEST_SUCCESS        = '.';
-    protected const TEST_FAILURE        = 'F';
-    protected const TEST_ERROR          = 'E';
-    protected const TEST_RISKY          = 'R';
-    protected const TEST_SKIPPED        = 'S';
-    protected const TEST_INCOMPLETE     = 'I';
+    const TEST_SUCCESS        = '.';
+    const TEST_FAILURE        = 'F';
+    const TEST_ERROR          = 'E';
+    const TEST_RISKY          = 'R';
+    const TEST_SKIPPED        = 'S';
+    const TEST_INCOMPLETE     = 'I';
+
+    public function __construct(bool $enable = false, string $api_token = null, string $project_id = null)
+    {
+        if (($enable && !$api_token) || ($enable && !$project_id)) {
+            echo "Craxus: no arguments were given.";
+            echo PHP_EOL;
+        } else if ($enable && $api_token && $project_id) {
+            // set value
+            $this->enable = $enable;
+            $this->api_token = $api_token;
+            $this->project_id = $project_id;
+
+            $this->configured = true;
+        }
+    }
 
     public function executeBeforeTest(string $test): void
     {
@@ -77,9 +96,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
 
     public function executeAfterLastTest(): void
     {
-        $this->checkConfig();
-
-        if (count($this->results) > 0)
+        if ($this->configured)
             $this->sendRequest();
     }
 
@@ -127,37 +144,14 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
         list($this->class, $this->method) = explode('::', $test);
     }
 
-    public function checkConfig()
-    {
-        if (!getenv('CRAXUS_API_TOKEN')) {
-            echo PHP_EOL;
-            echo "=================================================================";
-            echo PHP_EOL;
-            echo "CRAXUS: You have not set a value in .env file: 'CRAXUS_API_TOKEN'";
-            echo PHP_EOL;
-            echo "=================================================================";
-            echo PHP_EOL;
-            exit();
-        } elseif(!getenv('CRAXUS_PROJECT_ID')) {
-            echo PHP_EOL;
-            echo "==================================================================";
-            echo PHP_EOL;
-            echo "CRAXUS: You have not set a value in .env file: 'CRAXUS_PROJECT_ID'";
-            echo PHP_EOL;
-            echo "==================================================================";
-            echo PHP_EOL;
-            exit();
-        } else {
-            $this->api_token = getenv('CRAXUS_API_TOKEN');
-            $this->projectID = getenv('CRAXUS_PROJECT_ID');
-        }
-    }
-
     public function sendRequest()
     {
         $client = new Client();
 
-        $res = $client->post('https://craxus.io/api/'. $this->projectID .'/send_result', [
+        $res = $client->post('https://craxus.io/api/projects/'. $this->project_id .'/new_result', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
             'form_params' => [
                 'api_token' => $this->api_token,
                 'result' => json_encode($this->results)

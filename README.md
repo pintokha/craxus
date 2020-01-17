@@ -8,6 +8,7 @@ Register at <https://craxus.io> and use the application credentials within your 
 ## Supported platforms
 * PHP - supports PHP versions: 7.2
 * Laravel(& dusk) - version 5.8
+* Symfony
 
 ## Installation
 You can install Craxus watcher via composer package
@@ -17,28 +18,26 @@ composer require pintokha/craxus --dev
 Or add to ```composer.json```:
 ```
 "require-dev": {
-        "pintokha/craxus": "^1.0"
+        "pintokha/craxus": "2.0.0"
 }
 ```
 and then run ```composer update```.
 
-## Environment setup
-Now you need add to .env file next:
-```
-CRAXUS_API_TOKEN={your api_token}
-CRAXUS_PROJECT_ID={project id}
-```
-
-All data you can get on your Craxus account. <https://craxus.io>
-
 ## Usage
-#### Laravel
+#### Laravel, Symfony
 After installing the package, you need to update the ```phpunit.xml``` file by adding the 
 extension from the package (in tag \<extensions\>), example:
 ```
-<extensions>
-        <extension class="Pintokha\Craxus\Watcher"/>
-</extensions>
+<extension class="Pintokha\Craxus\Watcher">
+    <arguments>
+        <boolean>true</boolean> 
+        <string>your API token</string>
+        <string>project ID</string>
+    </arguments>
+</extension>
 ```
+First arg: extension status - on(true), off(false)
 
 If you are using Laravel dusk you need to create or update a ```phpunit.dusk.xml``` by adding the extension above.
+
+All data you can get on your Craxus account. <https://craxus.io>
