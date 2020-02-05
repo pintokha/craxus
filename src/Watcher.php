@@ -4,6 +4,7 @@ namespace Pintokha\Craxus;
 
 use GuzzleHttp\Client;
 use phpDocumentor\Reflection\Types\Void_;
+use PHPUnit\Runner\BeforeFirstTestHook;
 use PHPUnit\Runner\BeforeTestHook;
 use ReflectionClass;
 use PHPUnit\Runner\AfterIncompleteTestHook;
@@ -16,7 +17,7 @@ use PHPUnit\Runner\AfterTestFailureHook;
 
 final class Watcher implements BeforeTestHook, AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
-    AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
+    AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook, BeforeFirstTestHook
 {
     // user config
     protected $enable;
@@ -39,17 +40,16 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
     const TEST_SKIPPED        = 'S';
     const TEST_INCOMPLETE     = 'I';
 
-    public function __construct(bool $enable = false, string $api_token = null, string $project_id = null)
+    public function executeBeforeFirstTest(): void
     {
-        if (($enable && !$api_token) || ($enable && !$project_id)) {
+        $this->enable = getenv('CRAXUS_ENABLE');
+        $this->api_token = getenv('CRAXUS_API_TOKEN');
+        $this->project_id = getenv('CRAXUS_PROJECT_ID');
+
+        if (($this->enable && !$this->api_token) || ($this->enable && !$this->project_id)) {
             echo "Craxus: no arguments were given.";
             echo PHP_EOL;
-        } else if ($enable && $api_token && $project_id) {
-            // set value
-            $this->enable = $enable;
-            $this->api_token = $api_token;
-            $this->project_id = $project_id;
-
+        } else if ($this->enable && $this->api_token && $this->project_id) {
             $this->configured = true;
         }
     }
@@ -105,11 +105,12 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
         $this->results[] = [
             'number'    => $this->testID,
             'testName'  => $test,
-            'docBlock'  => $this->docComment,
+            'docComment'=> $this->docComment,
             'result'    => $result,
             'message'   => $message,
             'time'      => $time
         ];
+        $this->testID = null;
     }
 
     public function setTestData(string $test)
@@ -134,7 +135,7 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
         preg_match_all('#@(.*?)\n#s', $this->docComment, $annotations);
 
         foreach ($annotations[1] as $annotation)
-            if (strpos($annotation, 'craxus') !== false) {
+            if (strpos($annotation, 'id') !== false) {
                 list(, $this->testID) = explode(' ', $annotation);
             }
     }
@@ -146,18 +147,22 @@ final class Watcher implements BeforeTestHook, AfterLastTestHook,
 
     public function sendRequest()
     {
-        $client = new Client();
+        try {
+            $client = new Client();
 
-        $res = $client->post('https://craxus.io/api/projects/'. $this->project_id .'/new_result', [
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-            'form_params' => [
-                'api_token' => $this->api_token,
-                'result' => json_encode($this->results)
-            ]
-        ]);
+            $client->post('https://craxus.io/api/projects/'. $this->project_id .'/new_result', [
+                'headers' => [ 'Accept' => 'application/json' ],
+                'form_params' => [
+                    'api_token' => $this->api_token,
+                    'result' => json_encode($this->results)
+                ]
+            ]);
 
-        printf("\n %s", $res->getBody());
+            echo PHP_EOL;
+            echo "Craxus: your tests result successfully updated.";
+        } catch (\Exception $exception) {
+            echo PHP_EOL;
+            echo "Craxus: something wrong, please let me know by email: pintokha17@gmail.com";
+        }
     }
 }
