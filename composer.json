@@ -1,20 +1,22 @@
 {
     "name": "pintokha/craxus",
-    "description": "A package to send your test result on your Craxus account",
-    "keywords": ["testing", "manager", "phpunit", "laravel"],
+    "description": "PHP library for interacting with the Craxus service.",
+    "keywords": ["phpunit", "php", "laravel", "testing", "manager"],
+    "homepage": "https://github.com/pintokha/craxus",
     "license": "MIT",
     "authors": [
         {
             "name": "Sviatoslav Pintokha",
-            "email": "pintokha17@gmail.com"
+            "email": "pintokha17@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
         "php": ">=7.1",
+        "guzzlehttp/guzzle": "^6.3",
         "ext-json": "*"
     },
     "require-dev": {
-        "guzzlehttp/guzzle": "^6.3",
         "phpunit/phpunit": ">=7.2"
     },
     "autoload": {

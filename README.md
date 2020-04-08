@@ -14,22 +14,14 @@ You can install Craxus watcher via composer package
 ```
 composer require pintokha/craxus --dev
 ```
-Or add to ```composer.json```:
-```
-"require-dev": {
-        "pintokha/craxus": "1.0.1"
-}
-```
-and then run ```composer update```.
 
 ## Usage
 #### Laravel, Symfony
 After installing the package, you need to add in your env file for testing next variables:
 ```
 CRAXUS_ENABLE=true
-CRAXUS_API_TOKEN=your_api_token
-CRAXUS_PROJECT_ID=project_id
+CRAXUS_SECRET='your_secret_key'
+CRAXUS_APP_ID='your_app_id'
 ```
-First arg: extension status - on(true), off(false).
 
 All data you can get on your Craxus account. <https://craxus.io>
