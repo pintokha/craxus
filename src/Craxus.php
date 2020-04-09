@@ -106,7 +106,6 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
      * @param string $test
      * @param string $message
      * @param float $time
-     * @throws \ReflectionException
      */
     private function setResult(string $result, string  $test, string $message, float $time)
     {
@@ -124,14 +123,21 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
      *
      * @param string $test
      * @return string
-     * @throws \ReflectionException
      */
     private function getComment(string $test): string
     {
         list($class, $method) = explode('::', $test);
 
-        $reflectionClass = new ReflectionClass($class);
-        return $reflectionClass->getMethod($method)->getDocComment();
+        try {
+            $reflectionClass = new ReflectionClass($class);
+            $comment = $reflectionClass->getMethod($method)->getDocComment();
+
+        } catch (\ReflectionException $exception) {
+            // @todo report about exception
+            $comment = '';
+        }
+
+        return $comment;
     }
 
     /**
@@ -142,7 +148,7 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
         try {
             $client = new Client();
 
-            $res = $client->post('http://craxus.loc/api/v1/observer', [
+            $client->post('http://craxus.loc/api/v1/observer', [
                 'headers' => [ 'Accept' => 'application/json' ],
                 'form_params' => [
                     'app_id' => $this->app_id,
