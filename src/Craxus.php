@@ -4,7 +4,6 @@ namespace Pintokha\Craxus;
 
 use GuzzleHttp\Client;
 use ReflectionClass;
-use PHPUnit\Runner\BeforeFirstTestHook;
 use PHPUnit\Runner\AfterIncompleteTestHook;
 use PHPUnit\Runner\AfterLastTestHook;
 use PHPUnit\Runner\AfterRiskyTestHook;
@@ -13,7 +12,7 @@ use PHPUnit\Runner\AfterSuccessfulTestHook;
 use PHPUnit\Runner\AfterTestErrorHook;
 use PHPUnit\Runner\AfterTestFailureHook;
 
-final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
+final class Craxus implements AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
     AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
 {
@@ -43,11 +42,6 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
      * @var array results
      */
     protected $results = [];
-
-    public function executeBeforeFirstTest(): void
-    {
-        $this->getCredentials();
-    }
 
     public function executeAfterSuccessfulTest(string $test, float $time): void
     {
@@ -81,6 +75,8 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
 
     public function executeAfterLastTest(): void
     {
+        $this->getCredentials();
+
         if ($this->configured)
             $this->sendRequest();
     }
@@ -133,7 +129,6 @@ final class Craxus implements BeforeFirstTestHook, AfterLastTestHook,
             $comment = $reflectionClass->getMethod($method)->getDocComment();
 
         } catch (\ReflectionException $exception) {
-            // @todo report about exception
             $comment = '';
         }
 
