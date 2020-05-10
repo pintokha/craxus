@@ -20,8 +20,16 @@ composer require pintokha/craxus --dev
 After installing the package, you need to add in your env file for testing next variables:
 ```
 CRAXUS_ENABLE=true
-CRAXUS_SECRET='your_secret_key'
-CRAXUS_APP_ID='your_app_id'
+CRAXUS_SECRET=your_secret_key
+CRAXUS_APP_ID=your_app_id
 ```
 
+Next, you need to plug the extension in phpunit.xml (for Laravel dusk: phpunit.dusk.xml) file:
+```
+<extensions>
+    ...
+    <extension class="Pintokha\Craxus\Craxus"/>
+</extensions>
+```
+That's it, you can now run your tests. All results will be synced and displayed in your Craxus account.
 All data you can get on your Craxus account. <https://craxus.io>

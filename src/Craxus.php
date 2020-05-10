@@ -12,7 +12,7 @@ use PHPUnit\Runner\AfterSuccessfulTestHook;
 use PHPUnit\Runner\AfterTestErrorHook;
 use PHPUnit\Runner\AfterTestFailureHook;
 
-final class Craxus implements AfterLastTestHook,
+abstract class Craxus implements AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
     AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
 {
@@ -86,7 +86,7 @@ final class Craxus implements AfterLastTestHook,
      */
     private function getCredentials(): void
     {
-        $enable = (getenv('CRAXUS_ENABLE') === 'true') ? true : false;
+        $enable = filter_var(getenv('CRAXUS_ENABLE'), FILTER_VALIDATE_BOOLEAN);
         $this->app_id = getenv('CRAXUS_APP_ID');
         $this->secret = getenv('CRAXUS_SECRET');
 
@@ -153,10 +153,14 @@ final class Craxus implements AfterLastTestHook,
             ]);
 
             echo PHP_EOL;
-            echo "Craxus: your tests result successfully updated.";
-        } catch (\Exception $exception) {
+            echo "  Craxus: test results successfully updated";
             echo PHP_EOL;
-            echo "Craxus: something wrong, please let me know by email: pintokha17@gmail.com";
+        } catch (\Exception $exception) {
+            $msg = json_decode($exception->getResponse()->getBody()->getContents(), true);
+
+            echo PHP_EOL;
+            echo "  Craxus: ". $msg;
+            echo PHP_EOL;
         }
     }
 }
