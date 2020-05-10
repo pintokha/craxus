@@ -143,7 +143,7 @@ final class Craxus implements AfterLastTestHook,
         try {
             $client = new Client();
 
-            $client->post('http://craxus.loc/api/v1/observer', [
+            $client->post('https://craxus.io/api/v1/observer', [
                 'headers' => [ 'Accept' => 'application/json' ],
                 'form_params' => [
                     'app_id' => $this->app_id,
