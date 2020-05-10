@@ -12,7 +12,7 @@ use PHPUnit\Runner\AfterSuccessfulTestHook;
 use PHPUnit\Runner\AfterTestErrorHook;
 use PHPUnit\Runner\AfterTestFailureHook;
 
-abstract class Craxus implements AfterLastTestHook,
+final class Craxus implements AfterLastTestHook,
     AfterSuccessfulTestHook, AfterTestFailureHook, AfterTestErrorHook,
     AfterRiskyTestHook, AfterSkippedTestHook, AfterIncompleteTestHook
 {
